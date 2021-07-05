@@ -1,0 +1,170 @@
+h1{
+  font-size: large;
+  top: 0;
+  left: 0;
+  border-bottom-style: solid lightgray;
+}
+
+hr{
+  height: 1px;
+  margin: 0px;
+
+}
+
+select{
+background-color: white;
+
+}
+
+
+.nav-rtl {
+  padding-left:39px;
+  padding-right:0px;
+}
+
+.nav-rtl li {
+  float:right;
+}
+
+
+
+
+
+agm-map {
+  height: 299px;
+}
+
+
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 3;
+  padding-top: 100px; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgb(250,250,250);
+  background-color: rgba(250, 250, 250, 0.7);
+}
+
+
+
+.close {
+  position: absolute;
+  bottom: -20px;
+  right: 34px;
+}
+
+  .modal-content {
+      width: 100%;
+  }
+
+
+.progress-wrapper{
+  position: relative;
+}
+
+.progress-wrapper .text{
+  width: 100%;
+  z-index: 1;
+  position: absolute;
+  top: 49%;
+  left: 0;
+  transform: translateY(-50%);
+
+}
+
+
+
+.material-icons.yellow { color: gold; }
+
+.material-icons.black { color: black; }
+
+i {
+  font-size: 20px !important;
+  vertical-align:middle;
+}
+
+button {
+  min-width: 100px;
+}
+
+input.ng-invalid.ng-touched{
+  border: 2px solid red;
+}
+
+
+
+select.form-control {
+  -moz-appearance: none;
+   -webkit-appearance: none;
+   appearance: none;
+}
+
+select option {
+  margin: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+
+ul{
+padding:0px;
+
+}
+ul li{
+  display: inline;
+}
+
+tr:hover {
+  background-color: lightgray;
+}
+
+#heading{
+  pointer-events: none;
+}
+
+.heads{
+  pointer-events: none;
+}
+
+.headsz:hover{
+  background-color: white;
+}
+
+
+
+.material-icons.yellow { width:20px; }
+
+.button4 {
+  background-color: white;
+  height: 30px;
+  border-color: lightgray;
+  padding: 0px;
+  float:right
+}
+
+.back {
+  background: white;
+  border: 1px solid lightgray;
+  padding:4px;
+  border-radius: 5%;
+  display:inline-block;
+  
+}
+
+.back:hover{
+  background: lightgray;
+  border: 1px solid lightgray;
+  padding:4px;
+  border-radius: 5%;
+  display:inline-block;
+
+}
+
+
+

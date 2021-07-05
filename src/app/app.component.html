@@ -1,0 +1,474 @@
+<div class="container">
+    <!--  -->
+        <div class="text-center" style="border:1px solid lightgray; background-color: whitesmoke; padding-top:20px; margin-top:30px; margin-bottom:30px;">
+                <h3>Entertainment Event Ticket Search</h3><br>
+            <div class="col-xs-12 mx-auto col-md-6 col-lg-6 ">
+                <form #fmine="ngForm" name="fmine" (ngsubmit)="sforEvents()" id="fmine" class="text-left" >
+                    <div class="form-group col-xs-12 row  col-lg-12 col-md-12 ">
+                        <div class="col-xs-12 col-lg-4 col-md-4" style="margin-bottom:5px;">
+                            Keyword 
+                            <span style="color:red;">*</span>
+                        </div>
+                        <div class="col-md-8 col-xs-12 col-lg-8 ">
+                            <input  class="form-control" type="text" [(ngModel)]="keywords" matInput [matAutocomplete]="auto" [formControl]="searchTerm" id="keywords" name="keywords" placeholder="Enter Artist, Team or Event Name (eg. Lakers)" required aria-required="true" pattern=".*\S.*" style="margin-bottom: 0px">
+                            <small class="form-text text-muted" style="height:14px; margin-bottom: 1px;">
+                                <span *ngIf="searchTerm.invalid && (searchTerm.dirty || searchTerm.touched)" style="color:red;">Keyword cannot be empty.</span>
+                            </small>
+                            <mat-autocomplete #auto="matAutocomplete">
+                                <mat-option *ngFor="let eventAuto of autoCompleteArray" [value]="eventAuto.name">
+                                {{eventAuto?.name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-12 row col-xs-12 col-md-12 ">
+                        <div class="col-xs-12 col-lg-4 col-md-4" style="margin-bottom:5px;">Category</div>
+                        <div class="col-xs-12 col-lg-4 col-md-4">
+                            <select class="form-control" name="type" id="type" [(ngModel)]="type" > <option value="all" selected="chosen">All</option>
+                                <option value="music">Music</option>
+                                <option value="sports">Sports</option>
+                                <option value="artsandtheater">Arts & Theatre</option>
+                                <option value="film">Film</option>
+                                <option value="miscellaneous">Miscellaneous</option>   
+                            </select>
+
+
+
+
+                    
+
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-12 row col-xs-12 col-md-12 ">
+                        <!--Within same row in form-->
+                        <div class="col-md-4 col-xs-12 col-lg-4 " style="margin-bottom:5px;">Distance </div>
+                        <div class=" col-md-4 col-xs-12 col-lg-4 ">
+                            <input class="form-control" type="text" id="radius" name="radius" placeholder="10" [(ngModel)]="radius" >
+                        </div>
+                        <div class="col-xs-12 col-md-4 col-lg-4 ">
+                            <select class="form-control" name="unit" id="unit" [(ngModel)]="unit" >
+                                <option value="miles" selected="chosen">Miles</option>
+                                <option value="km">kilometers</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <div class="form-group col-lg-12 row col-xs-12 col-md-12 ">
+                        <div class="col-xs-12 col-md-4 col-lg-4 " style="margin-bottom:5px;"> From <span style="color:red;">*</span></div>
+                        <div class="col-xs-12 col-lg-8 col-md-8">
+                            <div class="col-xs-12 form-row " style="margin-left:1px;">
+                                <input type="radio" id="locationRadio" name="locationRadio" [(ngModel)]="locationRadio" value="gloc" (click)="currentLocation()" checked>&nbsp;Current location 
+                            </div>
+                            <div class="col-xs-12 form-row " style="margin-left:1px;">
+                                <input type="radio"  name="locationRadio" [(ngModel)]="locationRadio" value="other" (click)="otherLocation()">&nbsp;Other, Please specify:
+                            </div>
+                            <div class="col-xs-12 form-row" style="margin-left:19px;">
+                                <input type="text" id="otherLocation" name="otherLocation" [(ngModel)]="locationString" disabled 
+                                required [formControl]="otherLoc" class="form-control col-12" aria-required="true" pattern=".*\S.*">
+                            </div>
+                            <small class="form-text text-muted" id="cannot" style="height:15px; margin-bottom: 5px;">
+                                <span *ngIf="locationRadio.invalid && otherLoc.invalid && (otherLoc.dirty || otherLoc.touched)" style="color:red;">&nbsp;Location cannot be empty.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 form-group row col-xs-12 col-md-12 ">
+                        <div class="col-xs-12 col-lg-3 col-md-3">
+                            <button class="btn btn-primary btn-lg" (click)="sforEvents()" type="submit"   [disabled]="searchTerm.invalid || (locationRadio=='other'&& otherLoc.invalid)"><i class="material-icons md-18"></i>Search</button>&nbsp;
+                        </div>
+                        <div class="col-xs-12 col-lg-3 col-md-3">
+                              <button  class="btn btn-light btn-lg" (click)="clform()" type="button" ><i class="material-icons md-18"></i> Clear</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+ 
+
+
+
+
+
+    <div class="col-xs-12 col-lg-12 col-md-12 col-sm-12 ">
+        <div class="text-center">
+            <button class="btn btn-lg" id="res"  (click)="resultsView()"  style="  background: #007bff; color: white;   border-radius: 5px;">Results</button>
+            <button class="btn btn-lg" id="fav"   (click)="fShowing()" style="  background: none; color:#007dff;   border: none;">Favorites</button>
+        </div>
+        <br>
+  
+    </div>
+        <div id="responseBlock">
+            <div *ngIf="respExtra; else error1;" >
+                <div style="text-align:right">
+                    <button class="btn btn-light btn-lg" disabled id="details" (click)="displayDetails()" style="  background: white; border:none;  ">Details<i class="material-icons">keyboard_arrow_right</i></button><br><br>
+                </div>
+
+
+                
+                <div *ngIf="showProgressBar==true" class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated"  style="width:50%"></div>
+                </div>
+
+
+
+          
+
+
+
+                <div id="searchTable" >
+                    <table *ngIf="respExtra?._embedded && showProgressBar==false; else error1" class="table">
+
+                        <tr id="heading" style="border-bottom:solid"> 
+                            <td><b>#</b></td>
+                            <td><b>Date</b></td>
+                            <td><b>Event</b></td>
+                            <td><b>Category</b></td>
+                            <td><b>Venue Info</b></td>
+                            <td><b>Favorite</b></td>
+                            
+                        </tr>
+                        <tr *ngFor="let event of respExtra?._embedded?.events; let i=index;">
+                            <td><b>{{i+1}}</b></td>
+                            <td>{{event?.dates?.start?.localDate}}</td>
+                            <td><a href="javascript:" style="text-decoration: underline;" (click)="getEinfo(event.id);" matTooltip="{{event?.name}}">{{event?.name | truncate : 35 : false }}</a></td>
+                            <td><ul>
+                                <li *ngIf='event?.classifications[0]?.subGenre?.name != "Undefined" && event?.classifications[0]?.subGenre?.name != Undefined'>{{event?.classifications[0]?.subGenre?.name}} </li>
+
+                                <li *ngIf='event?.classifications[0]?.genre?.name != "Undefined" && event?.classifications[0]?.genre?.name != Undefined'> | {{event?.classifications[0]?.genre?.name}} </li>
+
+                                <li *ngIf='event?.classifications[0]?.segment?.name != "Undefined" && event?.classifications[0]?.segment?.name != Undefined'> | {{event?.classifications[0]?.segment?.name}}  </li>
+                                
+
+                                <li *ngIf='event?.classifications[0]?.subtype?.name != "Undefined" && event?.classifications[0]?.subtype?.name != Undefined '> | {{event?.classifications[0]?.subtype?.name}}  </li>
+
+                                <li *ngIf='event?.classifications[0]?.type?.name != "Undefined" && event?.classifications[0]?.type?.name != Undefined '> | {{event?.classifications[0]?.type?.name}}</li>
+                                </ul>
+                            </td>
+                            <td>{{event?._embedded?.venues[0]?.name}}</td>
+                            <td><i id="{{i}}" class="material-icons yellow" style="cursor: pointer;" (click)="favorite(event,i)" *ngIf="localStorageCopy?.getItem(event.id)">star</i>
+                                <i id="{{i}}" class="material-icons" style="cursor: pointer;" (click)="favorite(event,i)" *ngIf="!localStorageCopy?.getItem(event.id)">star_border</i></td>
+                        </tr>
+                    </table>
+                </div>
+
+                
+
+                <ng-template #error1>
+                    <br><br><br><br>
+                    <div *ngIf="showProgressBar==false" class="alert alert-warning text-left" role="alert">
+                        No records.
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <div id="fList" style="display:none;" >
+                <div style="text-align:right">
+                    <button class="btn btn-light btn-lg" disabled id="details2" (click)="displayDetails2()" style=" background: white; border:none;">Details<i class="material-icons">keyboard_arrow_right</i></button><br><br>
+                </div>
+                <table class="table  col-xs-12" *ngIf="localStorageCopy?.length; else error2">
+                    <tr id="heading" style="border-bottom:solid"> 
+                        
+                        <td><b>#</b></td>
+                        <td><b>Date</b></td>
+                        <td><b>Event</b></td>
+                        <td><b>Category</b></td>
+                        <td><b>Venue Info</b></td>
+                        <td><b>Favorite</b></td>
+                    </tr>
+                    <tr *ngFor="let event of starItems; let i=index" >
+                        <td><b>{{i+1}}</b></td>
+                        <td>{{event?.dates?.start?.localDate}}</td>
+                        <td><a href="javascript:" (click)="getEinfo(event.id);" matTooltip="{{event?.name}}">{{event?.name | truncate : 35 : false }}</a></td>
+                        <td>{{event?.classifications[0]?.genre?.name}}-{{event?.classifications[0]?.segment?.name}}</td>
+                        <td>{{event?._embedded?.venues[0]?.name}}</td>
+                  
+                        <td><i id="{{i}}" span class="material-icons outlined" style="cursor: pointer;" (click)="favorite(event,i)" *ngIf="localStorageCopy?.getItem(event.id)">delete</i>
+
+                            
+                        </td>
+              
+                    </tr>
+                </table>
+                <ng-template #error2>
+                    <br><br><br><br>
+                        <div class="alert alert-warning text-left" role="alert">
+                            No records.
+                        </div>
+                    </ng-template>
+            </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div id="infoBlock">
+            <div *ngIf="resD">
+                <script type="text/javascript" async src="https://platform.twitter.com/widgets.js"></script>
+                <h3>{{resD?.name}}</h3> <br>
+                <div>
+                    <span style="float:left;">
+                        <button class="btn btn-light btn-lg"  (click)="displayList()"><i class="material-icons">keyboard_arrow_left</i>List</button>
+                    </span>
+                    <span style="float:right;">
+                        <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=Check out {{resD?.name}} located at {{resD?._embedded?.venues[0]?.name}}. &hashtags=CSCI571EventSearch" 
+                        data-size='large'><img src="assets/Twitter.png" alt="TweetEvent" style="width:30px"></a> &nbsp; 
+
+
+
+                        <div class="back">
+                        <i id="{{i}}" class="material-icons yellow" style="cursor: pointer;" (click)="favorite(resD,i)" *ngIf="localStorageCopy?.getItem(resD.id)">star</i>
+                                <i id="{{i}}" class="material-icons" style="cursor: pointer;" (click)="favorite(resD,i)" *ngIf="!localStorageCopy?.getItem(resD.id)">star_border</i>
+                        </div>
+                        <br>
+
+
+
+
+
+
+
+                        
+
+
+
+
+
+
+
+
+
+
+                    </span>
+                </div>
+                <br><br>
+            
+        <div id="tabs">
+            <div >
+                <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
+                    <li class="nav-item  col-xs-2"><a class="nav-link  active " id="etab" data-toggle="tab" href="#event" role="tab" aria-controls="event" aria-selected="true">Event</a>
+                    </li>
+                    <li class="nav-item col-xs-2"><a class="nav-link " id="atab" data-toggle="tab" href="#artist" role="tab" aria-controls="artist" aria-selected="false">Artist/Teams</a>
+                    </li>
+                    <li class="nav-item col-xs-2"><a class="nav-link " id="vtab" data-toggle="tab" href="#venue" role="tab" aria-controls="venue" aria-selected="false">Venue</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div><br></div>
+            <div class="tab-content">
+                <div class="tab-pane  show active" id="event" role="tabpanel" aria-labelledby="etab">
+                    <table class="table table-hover table-striped">
+                        <tr  *ngIf="resD?._embedded?.attractions" style="  background: lightgray;  ">
+                            <td><b>Artist/Team(s)</b></td>
+                            <td><span *ngFor="let attraction of resD?._embedded?.attractions">{{attraction?.name}}  </span></td>
+                        
+                        </tr>
+                        <tr class="heads" *ngIf="resD?._embedded?.venues[0]?.name" >
+                            <td><b>Venue</b></td>
+                            <td>{{resD?._embedded?.venues[0]?.name}}</td>
+                        </tr>
+                        <tr  *ngIf="resD?.dates?.start" style="  background: lightgray;  ">
+                            <td><b>Time</b></td>
+                            <td>{{time}} </td>
+                        </tr>
+                        <tr class="heads" *ngIf="resD?.classifications" >
+                            <td><b>Category</b></td>
+                            <td>
+                                <ul>
+                                <li *ngIf='resD?.classifications[0]?.subGenre?.name != "Undefined" && resD?.classifications[0]?.subGenre?.name != Undefined'>{{resD?.classifications[0]?.subGenre?.name}} </li>
+
+                                <li *ngIf='resD?.classifications[0]?.genre?.name != "Undefined" && resD?.classifications[0]?.genre?.name != Undefined'> | {{resD?.classifications[0]?.genre?.name}} </li>
+
+                                <li *ngIf='resD?.classifications[0]?.segment?.name != "Undefined" && resD?.classifications[0]?.segment?.name != Undefined'> | {{resD?.classifications[0]?.segment?.name}}  </li>
+                                
+
+                                <li *ngIf='resD?.classifications[0]?.subtype?.name != "Undefined" && resD?.classifications[0]?.subtype?.name != Undefined '> | {{resD?.classifications[0]?.subtype?.name}} | </li>
+
+                                <li *ngIf='resD?.classifications[0]?.type?.name != "Undefined" && resD?.classifications[0]?.type?.name != Undefined '> | {{resD?.classifications[0]?.type?.name}}</li>
+                                </ul>
+
+
+
+
+
+                                
+
+
+
+                            </td>
+                        </tr>
+                        <tr  *ngIf="resD?.priceRanges" style="  background: lightgray;  ">
+                            <td><b>Price Range</b></td>
+                            <td>{{(resD?.priceRanges[0]?.min)}} - {{(resD?.priceRanges[0]?.max)}} USD</td>
+                        </tr>
+                        <tr class="heads" *ngIf="resD?.dates?.status?.code" >
+                            <td><b>Ticket Status</b></td>
+                            <td>{{resD?.dates?.status?.code}}</td>
+                        </tr>
+                        <tr *ngIf="resD?.url" style="  background: lightgray;  ">
+                            <td><b>Buy Tickets At</b></td>
+                            <td><a href="{{resD?.url}}" target="_blank">Ticketmaster</a></td>
+                        </tr>
+                        <tr class="headsz" *ngIf="resD?.seatmap">
+                            <td><b>Seat Map</b></td>
+                            <td><a href="javascript:" (click)="viewSeats(resD?.seatmap?.staticUrl)">View Seat Map Here</a></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+
+
+
+
+ 
+
+
+
+                <div class="tab-pane " id="artist" role="tabpanel" aria-labelledby="atab">
+                    
+
+
+                    <ng-template #error5>
+                        <div *ngFor="let item of resD?._embedded?.attractions; let i=index; ">
+                            <h3>{{resD?._embedded?.attractions[i]?.name}}</h3>
+                            <br>
+                            No Details Availible
+                        </div>
+                        <div *ngIf="!resD?._embedded?.attractions;" >
+                            <h3>{{resD?.name}}</h3>
+                            <br>
+                            No Details Availible
+                        </div>
+
+                    </ng-template>
+                    <ng-template #error3>
+                        <div *ngIf="!(eventCategory=='Music' || eventCategory=='Arts & Theatre') ; else error5;" >
+                            <br><br><br><br>
+                            <div class="alert alert-warning text-left" role="alert">
+                                No records.
+                            </div>
+                        </div>
+                        </ng-template>
+
+                    
+                    <div *ngIf="resD?._embedded?.attractions!=Undefined || eventCategory=='Music' || eventCategory=='Arts & Theatre'; else error3;">
+
+
+                    
+                        
+                    <div *ngIf="artInfo[0] ; else error3;" >
+
+                    
+
+                    
+                        
+                    <div *ngIf="artInfo[0]?.artists?.items?.length; else error5;" >
+                        
+                    <div *ngFor="let item of resD?._embedded?.attractions; let i=index; ">
+
+                        
+
+
+
+
+                        <div id="artistDiv">
+
+
+
+
+                            <div *ngIf="artInfo" >
+                                
+                                <h3>{{artInfo[i]?.artists?.items[0]?.name}}</h3>
+                                <table *ngIf="artInfo" class="table table-striped table-hover">
+                                <tr *ngIf="artInfo[i]" class="headsz">
+                                    <td><b>Name</b></td>
+                                    <td>{{artInfo[i]?.artists?.items[0]?.name}}</td>
+                                </tr> 
+                                <tr *ngIf="artInfo[i]" class="headsz">
+                                    <td><b>Followers</b></td>
+                                    <td>{{(artInfo[i]?.artists?.items[0]?.followers?.total).toLocaleString('en')}}</td>
+                                </tr>
+                                <tr *ngIf="artInfo[i]"class="headsz">
+                                    <td><b>Popularity</b></td>
+                                    <td class="progress-wrapper" style="text-align:left;"><round-progress [current]="artInfo[i]?.artists?.items[0]?.popularity" 
+                                        [max]="150" [color]="'#32CD32'" [radius]="20" [stroke]="3" [duration]="900" [animation]="'easeInOutQuart'" 
+                                        [clockwise]="false"></round-progress><div class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{artInfo[i]?.artists?.items[0]?.popularity}}</div></td>
+                                </tr>
+                                <tr *ngIf="artInfo[i]"class="headsz">
+                                    <td><b>Check At</b></td>
+                                    <td><a href="{{artInfo[i]?.artists?.items[0]?.external_urls?.spotify}}" target="_blank">Spotify</a></td>
+                                </tr>      
+                                </table>
+ 
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+                    
+                </div>
+                    
+                    </div>
+
+                    </div>
+                </div>
+                <div class="tab-pane" id="venue" role="tabpanel" aria-labelledby="vtab">
+                    <div id="venueInfoDiv">
+                        <div id="venueInfoDiv" *ngIf="vDict">
+                            <h3>{{resD?._embedded?.venues[0]?.name}}</h3><br>
+                            <table class="table table-striped table-hover">
+                                <tr *ngIf="vDict?._embedded?.venues[0]?.address?.line1" class="headsz">
+                                    <td>Address</td>
+                                    <td>{{vDict?._embedded?.venues[0]?.address?.line1}}</td>
+                                </tr>
+                                <tr *ngIf="vDict?._embedded?.venues[0]?.city?.name" class="headsz">
+                                    <td>City</td>
+                                    <td>{{vDict?._embedded?.venues[0]?.city?.name}}, {{vDict?._embedded?.venues[0]?.state?.name}}</td>
+                                </tr>
+                                <tr *ngIf="vDict?._embedded?.venues[0]?.boxOfficeInfo?.phoneNumberDetail" class="headsz">
+                                    <td>Phone Number</td>
+                                    <td>{{vDict?._embedded?.venues[0]?.boxOfficeInfo?.phoneNumberDetail}}</td>
+                                </tr>
+                                <tr *ngIf="vDict?._embedded?.venues[0]?.boxOfficeInfo?.openHoursDetail" class="headsz">
+                                    <td>Open Hours</td>
+                                    <td>{{vDict._embedded?.venues[0]?.boxOfficeInfo?.openHoursDetail}}</td>
+                                </tr>
+                                <tr *ngIf="vDict?._embedded.venues[0]?.generalInfo?.generalRule" class="headsz">
+                                    <td>General Rule</td>
+                                    <td>{{vDict?._embedded.venues[0]?.generalInfo?.generalRule}}</td>
+                                </tr>
+                                <tr *ngIf="vDict._embedded.venues[0].generalInfo?.childRule" class="headsz">
+                                    <td>Child Rule</td>
+                                    <td>{{vDict?._embedded.venues[0]?.generalInfo?.childRule}}</td>
+                                </tr>
+                            </table>
+                    
+                            <agm-map  [zoom]="16" [latitude]="lat" [longitude]="lng" *ngIf="vDict" class="col-xs-12">
+                                <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+                            </agm-map>
+                            <br> <br> 
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+            </div>
+        </div>          
+    </div>         
+</div>
+<div id="seatMapping" class="modal">
+    
+    <div class="modal-content" style="width:350px;height:370px;">
+        <h1>View Seat Map &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x <br><hr></h1>
+        
+        
+         <a id="modalAnchor">    <img  id="img01" style="width:330px;height:280px;"> <hr> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button  class="btn btn-outline-dark" style="margin:10px;" (click)="closeModal()">Close</button>         <a id="modalAnchor2" target="_blank"> </a>       </a>
+        
+    </div>
+</div>
+      
